@@ -80,19 +80,22 @@ static void switch_dev_work(struct work_struct *work)
 	int mode;
 	mutex_lock(&sem);
 
-	if (!gpio_get_value(switch_data->key3_gpio)) {
+	if(!gpio_get_value(switch_data->key3_gpio))
+	{
 		mode = 3;
 		keyCode = keyCode_slider_bottom;
-	} else if(!gpio_get_value(switch_data->key2_gpio)) {
+	}
+	else if(!gpio_get_value(switch_data->key2_gpio))
+	{
 		mode = 2;
 		keyCode = keyCode_slider_middle;
-	} else if(!gpio_get_value(switch_data->key1_gpio)) {
+	}
+	else if(!gpio_get_value(switch_data->key1_gpio))
+	{
 		mode = 1;
 		keyCode = keyCode_slider_top;
 	}
-
-
-	if (current_mode != mode) {
+        if (current_mode != mode) {
 		current_mode = mode;
 		switch_set_state(&switch_data->sdev, current_mode);
 		send_input(keyCode);
@@ -149,18 +152,19 @@ switch_dev_get_devtree_pdata(struct device *dev)
 }
 #endif
 
-// Keycode top
 static int keyCode_top_show(struct seq_file *seq, void *offset)
 {
-	seq_printf(seq, "%d\n", keyCode_slider_top);
-	return 0;
+    seq_printf(seq, "%d\n", keyCode_slider_top);
+    return 0;
 }
+
 static ssize_t keyCode_top_write(struct file *file, const char __user *page, size_t t, loff_t *lo)
 {
 	int data;
 	char buf[10];
 
-	if (copy_from_user(buf, page, t)) {
+	if (copy_from_user(buf, page, t))
+	{
 		dev_err(switch_data->dev, "read proc input error.\n");
 		return t;
 	}
@@ -176,10 +180,12 @@ static ssize_t keyCode_top_write(struct file *file, const char __user *page, siz
 
 	return t;
 }
+
 static int keyCode_top_open(struct inode *inode, struct file *file)
 {
 	return single_open(file, keyCode_top_show, inode->i_private);
 }
+
 const struct file_operations proc_keyCode_top =
 {
 	.owner		= THIS_MODULE,
@@ -190,18 +196,19 @@ const struct file_operations proc_keyCode_top =
 	.release	= single_release,
 };
 
-// Keycode middle
 static int keyCode_middle_show(struct seq_file *seq, void *offset)
 {
-	seq_printf(seq, "%d\n", keyCode_slider_middle);
-	return 0;
+    seq_printf(seq, "%d\n", keyCode_slider_middle);
+    return 0;
 }
+
 static ssize_t keyCode_middle_write(struct file *file, const char __user *page, size_t t, loff_t *lo)
 {
 	int data;
 	char buf[10];
 
-	if (copy_from_user(buf, page, t)) {
+	if (copy_from_user(buf, page, t))
+	{
 		dev_err(switch_data->dev, "read proc input error.\n");
 		return t;
 	}
@@ -217,10 +224,12 @@ static ssize_t keyCode_middle_write(struct file *file, const char __user *page, 
 
 	return t;
 }
+
 static int keyCode_middle_open(struct inode *inode, struct file *file)
 {
 	return single_open(file, keyCode_middle_show, inode->i_private);
 }
+
 const struct file_operations proc_keyCode_middle =
 {
 	.owner		= THIS_MODULE,
@@ -231,18 +240,19 @@ const struct file_operations proc_keyCode_middle =
 	.release	= single_release,
 };
 
-// Keycode bottom
 static int keyCode_bottom_show(struct seq_file *seq, void *offset)
 {
-	seq_printf(seq, "%d\n", keyCode_slider_bottom);
-	return 0;
+    seq_printf(seq, "%d\n", keyCode_slider_bottom);
+    return 0;
 }
+
 static ssize_t keyCode_bottom_write(struct file *file, const char __user *page, size_t t, loff_t *lo)
 {
 	int data;
 	char buf[10];
 
-	if (copy_from_user(buf, page, t)) {
+	if (copy_from_user(buf, page, t))
+	{
 		dev_err(switch_data->dev, "read proc input error.\n");
 		return t;
 	}
@@ -258,10 +268,12 @@ static ssize_t keyCode_bottom_write(struct file *file, const char __user *page, 
 
 	return t;
 }
+
 static int keyCode_bottom_open(struct inode *inode, struct file *file)
 {
 	return single_open(file, keyCode_bottom_show, inode->i_private);
 }
+
 const struct file_operations proc_keyCode_bottom =
 {
 	.owner		= THIS_MODULE,
@@ -292,7 +304,7 @@ static int tristate_dev_probe(struct platform_device *pdev)
 	set_bit(EV_KEY, switch_data->input->evbit);
 
 	for (i = KEYCODE_BASE; i < KEYCODE_BASE + TOTAL_KEYCODES; i++)
-		set_bit(i, switch_data->input->keybit);
+	    set_bit(i, switch_data->input->keybit);
 
 	input_set_drvdata(switch_data->input, switch_data);
 
@@ -330,87 +342,111 @@ static int tristate_dev_probe(struct platform_device *pdev)
 	// irqs and work, timer stuffs
 	//config irq gpio and request irq
 	switch_data->irq_key1 = gpio_to_irq(switch_data->key1_gpio);
-	if (switch_data->irq_key1 <= 0) {
-		printk("%s, irq number is not specified, irq #= %d, int pin=%d\n\n",
-			__func__, switch_data->irq_key1, switch_data->key1_gpio);
-		goto err_detect_irq_num_failed;
-	} else {
-		error = gpio_request(switch_data->key1_gpio,"tristate_key1-int");
-		if (error < 0) {
-			printk(KERN_ERR "%s: gpio_request, err=%d", __func__, error);
-			goto err_request_gpio;
-		}
-		error = gpio_direction_input(switch_data->key1_gpio);
-		if (error < 0) {
-			printk(KERN_ERR "%s: gpio_direction_input, err=%d", __func__, error);
-			goto err_set_gpio_input;
-		}
+       if (switch_data->irq_key1 <= 0)
+       {
+            printk("%s, irq number is not specified, irq #= %d, int pin=%d\n\n", __func__, switch_data->irq_key1, switch_data->key1_gpio);
+            goto err_detect_irq_num_failed;
+       }
+       else
+       {
+        	error = gpio_request(switch_data->key1_gpio,"tristate_key1-int");
+        	if(error < 0)
+        	{
+        		printk(KERN_ERR "%s: gpio_request, err=%d", __func__, error);
+        		goto err_request_gpio;
+        	}
+        	error = gpio_direction_input(switch_data->key1_gpio);
+        	if(error < 0)
+        	{
+        		printk(KERN_ERR "%s: gpio_direction_input, err=%d", __func__, error);
+        		goto err_set_gpio_input;
+        	}
 
-		error = request_irq(switch_data->irq_key1, switch_dev_interrupt,
-				IRQF_TRIGGER_FALLING, "tristate_key1", switch_data);
-		if (error) {
-			dev_err(dev, "request_irq %i failed.\n",
-				switch_data->irq_key1);
-			switch_data->irq_key1 = -EINVAL;
-			goto err_request_irq;
-		}
-	}
+			error = request_irq(switch_data->irq_key1, switch_dev_interrupt,
+			    IRQF_TRIGGER_FALLING|IRQF_TRIGGER_RISING, "tristate_key1", switch_data);
 
-	switch_data->irq_key2 = gpio_to_irq(switch_data->key2_gpio);
-	if (switch_data->irq_key2 <= 0) {
-		printk("%s, irq number is not specified, irq #= %d, int pin=%d\n\n",
-			__func__, switch_data->irq_key2, switch_data->key2_gpio);
-		goto err_detect_irq_num_failed;
-	} else {
-		error = gpio_request(switch_data->key2_gpio,"tristate_key2-int");
-		if (error < 0) {
-			printk(KERN_ERR "%s: gpio_request, err=%d", __func__, error);
-			goto err_request_gpio;
-		}
-		error = gpio_direction_input(switch_data->key2_gpio);
-		if (error < 0) {
-			printk(KERN_ERR "%s: gpio_direction_input, err=%d", __func__, error);
-			goto err_set_gpio_input;
-		}
+        	if (error) {
+        		dev_err(dev,
+        			"request_irq %i failed.\n",
+        			switch_data->irq_key1);
 
-		error = request_irq(switch_data->irq_key2, switch_dev_interrupt,
-				IRQF_TRIGGER_FALLING, "tristate_key2", switch_data);
+        		switch_data->irq_key1 = -EINVAL;
+        		goto err_request_irq;
+            }
+       }
+       //config irq gpio and request irq
+	 switch_data->irq_key2 = gpio_to_irq(switch_data->key2_gpio);
+       if (switch_data->irq_key2 <= 0)
+       {
+            printk("%s, irq number is not specified, irq #= %d, int pin=%d\n\n", __func__, switch_data->irq_key2, switch_data->key2_gpio);
+            goto err_detect_irq_num_failed;
+       }
+       else
+       {
+        	error = gpio_request(switch_data->key2_gpio,"tristate_key2-int");
+        	if(error < 0)
+        	{
+        		printk(KERN_ERR "%s: gpio_request, err=%d", __func__, error);
+        		goto err_request_gpio;
+        	}
+        	error = gpio_direction_input(switch_data->key2_gpio);
+        	if(error < 0)
+        	{
+        		printk(KERN_ERR "%s: gpio_direction_input, err=%d", __func__, error);
+        		goto err_set_gpio_input;
+        	}
 
-		if (error) {
-			dev_err(dev, "request_irq %i failed.\n",
-				switch_data->irq_key2);
-			switch_data->irq_key2 = -EINVAL;
-			goto err_request_irq;
-		}
-	}
+			error = request_irq(switch_data->irq_key2, switch_dev_interrupt,
+			    IRQF_TRIGGER_FALLING|IRQF_TRIGGER_RISING, "tristate_key2", switch_data);
 
-	switch_data->irq_key3 = gpio_to_irq(switch_data->key3_gpio);
-	if (switch_data->irq_key3 <= 0) {
-		printk("%s, irq number is not specified, irq #= %d, int pin=%d\n\n",
-			__func__, switch_data->irq_key3, switch_data->key3_gpio);
-		goto err_detect_irq_num_failed;
-	} else {
-		error = gpio_request(switch_data->key3_gpio,"tristate_key3-int");
-		if (error < 0) {
-			printk(KERN_ERR "%s: gpio_request, err=%d", __func__, error);
-			goto err_request_gpio;
-		}
-		error = gpio_direction_input(switch_data->key3_gpio);
-		if (error < 0) {
-			printk(KERN_ERR "%s: gpio_direction_input, err=%d", __func__, error);
-			goto err_set_gpio_input;
-		}
+        	if (error) {
+        		dev_err(dev,
+        			"request_irq %i failed.\n",
+        			switch_data->irq_key2);
 
-		error = request_irq(switch_data->irq_key3, switch_dev_interrupt,
-				IRQF_TRIGGER_FALLING, "tristate_key3", switch_data);
-		if (error) {
-			dev_err(dev, "request_irq %i failed.\n",
-				switch_data->irq_key3);
-			switch_data->irq_key3 = -EINVAL;
-			goto err_request_irq;
-		}
+        		switch_data->irq_key2 = -EINVAL;
+        		goto err_request_irq;
+            }
 
-	}
+       }
+
+	   switch_data->irq_key3 = gpio_to_irq(switch_data->key3_gpio);
+	   if (switch_data->irq_key3 <= 0)
+	   {
+	            printk("%s, irq number is not specified, irq #= %d, int pin=%d\n\n", __func__, \
+	            switch_data->irq_key3, switch_data->key3_gpio);
+	            goto err_detect_irq_num_failed;
+       }
+       else
+       {
+        	error = gpio_request(switch_data->key3_gpio,"tristate_key3-int");
+        	if(error < 0)
+        	{
+        		printk(KERN_ERR "%s: gpio_request, err=%d", __func__, error);
+        		goto err_request_gpio;
+        	}
+        	error = gpio_direction_input(switch_data->key3_gpio);
+        	if(error < 0)
+        	{
+        		printk(KERN_ERR "%s: gpio_direction_input, err=%d", __func__, error);
+        		goto err_set_gpio_input;
+        	}
+
+
+			error = request_irq(switch_data->irq_key3, switch_dev_interrupt,
+			    IRQF_TRIGGER_FALLING|IRQF_TRIGGER_RISING, "tristate_key3", switch_data);
+
+        	if (error) {
+        		dev_err(dev,
+        			"request_irq %i failed.\n",
+        			switch_data->irq_key3);
+
+        		switch_data->irq_key3 = -EINVAL;
+        		goto err_request_irq;
+            }
+
+       }
+
 
 	INIT_WORK(&switch_data->work, switch_dev_work);
 
