@@ -42,7 +42,7 @@ static struct work_struct input_boost_work;
 static unsigned int input_boost_enabled = 1;
 module_param(input_boost_enabled, uint, 0644);
 
-static unsigned int input_boost_ms = 40;
+static unsigned int input_boost_ms = 60;
 module_param(input_boost_ms, uint, 0644);
 
 static bool sched_boost_on_input;
@@ -51,7 +51,7 @@ module_param(sched_boost_on_input, bool, 0644);
 static bool sched_boost_active;
 
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
-static int dynamic_stune_boost = 6;
+static int dynamic_stune_boost = 4;
 module_param(dynamic_stune_boost, uint, 0644);
 #endif /* CONFIG_DYNAMIC_STUNE_BOOST */
 
