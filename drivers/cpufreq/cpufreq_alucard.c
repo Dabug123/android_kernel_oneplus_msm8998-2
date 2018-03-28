@@ -65,8 +65,8 @@ static struct mutex gov_lock;
 #define DEFAULT_TIMER_RATE_SUSP ((unsigned long)(50 * USEC_PER_MSEC))
 
 #define FREQ_RESPONSIVENESS             1036800
-#define FREQ_RESPONSIVENESS_MAX		    1478400
-#define FREQ_RESPONSIVENESS_MAX_BIGC    2265600
+#define FREQ_RESPONSIVENESS_MAX		    1401600
+#define FREQ_RESPONSIVENESS_MAX_BIGC    1804800
 
 #define CPUS_DOWN_RATE				1
 #define CPUS_UP_RATE				1
